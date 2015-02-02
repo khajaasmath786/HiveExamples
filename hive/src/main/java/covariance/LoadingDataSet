@@ -1,0 +1,33 @@
+--http://www.edureka.co/blog/hive-commands/
+
+load data local inpath '/home/edureka/Lunoworkspace/hive/src/main/java/covariance/DataSet-NYSE_daily_prices_Q.csv' into table nyse;
+
+hadoop fs -ls /tmp/user/hive/warehouse/nyse
+
+--------- External Load ------------
+load data local inpath '/home/edureka/Lunoworkspace/hive/src/main/java/covariance/DataSet-NYSE_daily_prices_Q.csv' into table nyse_external;
+
+hadoop fs -ls /tmp/user/hive/warehouse/nyse_external
+
+see if files are copied from external folders to ware house table directory.
+
+############# Insert overwrite and insert
+
+**Difference between load and insert is load is used with file and insert is used with other tables using select.
+
+insert into table nyse 
+select exchange_detai,stock_symbol,stock_date,stock_price_open,
+stock_price_high, stock_price_low, stock_price_close, stock_volume, 
+stock_price_adj_close
+from nyse_external ;
+
+select count(*) from nyse;
+
+insert overwrite table nyse 
+select exchange_detai,stock_symbol,stock_date,stock_price_open,
+stock_price_high, stock_price_low, stock_price_close, stock_volume, 
+stock_price_adj_close
+from nyse_external ;
+
+select count(*) from nyse;
+

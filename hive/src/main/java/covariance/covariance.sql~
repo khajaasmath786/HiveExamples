@@ -1,0 +1,14 @@
+select a.STOCK_SYMBOL, b.STOCK_SYMBOL, month(a.STOCK_DATE),
+(AVG(a.STOCK_PRICE_HIGH*b.STOCK_PRICE_HIGH) -
+(AVG(a.STOCK_PRICE_HIGH)*AVG(b.STOCK_PRICE_HIGH)))
+from nyse a join nyse b on
+a.STOCK_DATE=b.STOCK_DATE where a.STOCK_SYMBOL<b.STOCK_SYMBOL and
+year(a.STOCK_DATE)=2008
+group by a.STOCK_SYMBOL, b. STOCK_SYMBOL,
+month(a.STOCK_DATE); 
+
+-------------------------------
+
+--Save this script as .sql in some folder and call it in hive as 
+
+--hive -f /usr/home/edureka/desktop/covariance.sql

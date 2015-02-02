@@ -1,0 +1,35 @@
+----- Don't use exchange ..It's keyword in Hive
+----- http://www.edureka.co/blog/hive-commands/
+
+########### Internal table with Same Data    ########### -
+
+CREATE TABLE nyse(exchange_detai String,stock_symbol String,stock_date String,stock_price_open double, stock_price_high double, stock_price_low double, stock_price_close double, stock_volume double, stock_price_adj_close double) ROW format delimited fields terminated BY ",";
+
+Notes: See if directory is created in /tmp/user/hive/warehouse as defined in hive-site.xml for warehouse dir.
+** Folder is created with table name. Schema is in metastore.
+show create table nyse ; ---> Shows location of data.
+
+hadoop fs -ls /tmp/user/hive/warehouse
+
+########### External Table with Same Data ########### 
+
+CREATE external TABLE nyse_external1(exchange_detai String,stock_symbol String,stock_date String,stock_price_open double, stock_price_high double, stock_price_low double, stock_price_close double, stock_volume double, stock_price_adj_close double) 
+ROW format delimited fields terminated BY ","
+LOCATION '/user/external';
+
+Notes: See if directory for external table in /usr/external --> use Location folder
+
+show create table nyse_external ; ---> Shows location of data.
+
+############# Default delimiter is not comma('CTRL+A') but defualt storage is text########
+
+
+
+########### DROP External Table  ########### 
+DROP TABLE nyse_external1
+only schema is deleted but data is still present in the /usr/external folder
+Schema is in metastore.
+
+########### DROP Internal Table  ###########
+Table and data is delted from warehouse directory.
+
