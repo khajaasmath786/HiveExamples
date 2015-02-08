@@ -1,0 +1,15 @@
+1. Make sure you Restart Hadoop cluster
+
+sudo service hadoop-master stop
+sudo service hadoop-master start
+hadoop dfsadmin -safemode leave
+
+2. Command: Hive --service metastore 
+-- Only edureka machine. You can omit in cloudera vm or realtime
+
+3. COmmand: hive --service hiveserver -p 10000 &  
+--> Run this command before running this prog. It will take time to start
+-- Make sure that port is 10000 in java file. change ports in both places if errors are present
+
+4. Follow link and also see how to use hive2
+http://saurzcode.in/2015/01/connect-hiveserver2-service-jdbc-client/
