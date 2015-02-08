@@ -1,0 +1,5 @@
+1,Prod-1,1,300,A jumper
+2,Prod-1,2,300,A jumper
+3,Prod-1,2,300,A jumper
+4,Prod-2,3,100,A rubberchicken
+5,Prod-1,3,300,A jumper

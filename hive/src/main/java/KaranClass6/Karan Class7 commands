@@ -1,0 +1,360 @@
+
+
+--------------------------------PARTITION and BUCKET EXAMPLE------------------------
+
+hive
+
+
+
+create database class7;
+
+use class7;
+
+
+
+# comment can be added to column and also to the table. See below example
+
+CREATE TABLE page_view(
+
+view_time INT, 
+
+user_id BIGINT,
+
+page_url STRING,
+
+ip STRING COMMENT 'IP Address of the User')
+
+COMMENT 'This is the page view table'
+
+PARTITIONED BY(dt STRING, country STRING)
+
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' 
+
+STORED AS TEXTFILE;
+
+
+---- Static Partition ------------------
+
+
+LOAD DATA LOCAL INPATH '/home/edureka/git/localHive/hive/src/main/java/KaranClass6/page_view_20140415_IND.csv' INTO TABLE page_view PARTITION(dt='2014-04-15', country='IN');
+
+LOAD DATA LOCAl INPATH '/home/edureka/git/localHive/hive/src/main/java/KaranClass6/page_view_20140415_US.csv' INTO TABLE page_view PARTITION(dt='2014-04-15', country='US');
+
+
+
+---- Dynamic Partition With Bucketing------------------
+---- External Table -- Location is directory from the hdfs not local
+
+
+
+CREATE EXTERNAL TABLE page_view_ext(
+
+view_time INT, 
+
+user_id BIGINT,
+
+page_url STRING,
+
+ip STRING COMMENT 'IP Address of the User')
+
+COMMENT 'This is the page view table'
+
+PARTITIONED BY(dt STRING, country STRING)
+
+CLUSTERED BY(user_id) INTO 3 BUCKETS
+
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' 
+
+STORED AS TEXTFILE
+
+LOCATION '/user/edureka/hdfs';
+# location should be directory from hdfs
+
+
+
+set hive.enforce.bucketing = true;  
+
+
+
+INSERT OVERWRITE TABLE page_view_ext
+
+PARTITION (dt='2014-04-15', country='US')
+
+SELECT view_time,user_id,page_url,ip from page_view where dt='2014-04-15' and country='US';
+
+
+
+SHOW PARTITIONS page_view_ext;
+
+
+
+SELECT * FROM page_view_ext
+
+TABLESAMPLE(BUCKET 1 OUT OF 2 ON user_id);
+
+
+
+--------------------------------HIVE EXAMPLES------------------------
+
+SHOW FUNCTIONS;
+
+
+
+--location for datawarehouse
+
+/user/cloudera/hive/warehouse/
+
+
+
+create database retail1;
+
+use retail1;
+
+
+
+--create table to store transactional records.
+
+CREATE TABLE txnrecords(
+
+txnno  INT,
+
+txndate STRING, 
+
+custno INT,
+
+amount DOUBLE, 
+
+category STRING,
+
+product STRING, 
+
+city STRING,
+
+state STRING, 
+
+spendby STRING )
+
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' 
+
+STORED AS TEXTFILE;
+
+
+
+LOAD DATA LOCAL INPATH '/home/edureka/module7/input/txns.csv' OVERWRITE INTO TABLE txnrecords;
+
+
+
+DESCRIBE txnrecords;
+
+
+
+
+
+Select count(*) from txnrecords;
+
+
+
+Select count (DISTINCT category) from txnrecords;
+
+
+
+Select category, sum( amount) from txnrecords group by category;
+
+
+
+--Inserting Output into another table
+
+CREATE TABLE results(
+
+txnno  INT,
+
+txndate STRING, 
+
+custno INT,
+
+amount DOUBLE, 
+
+category STRING,
+
+product STRING, 
+
+city STRING,
+
+state STRING, 
+
+spendby STRING )
+
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' 
+
+STORED AS TEXTFILE;
+
+
+
+INSERT OVERWRITE TABLE results 
+
+SELECT * from txnrecords;
+
+
+
+--Inserting into local file
+
+INSERT OVERWRITE LOCAL DIRECTORY '/home/edureka/module7/localdir2/' 
+
+SELECT * from page_view;
+
+
+
+----------------------------------------------JOIN-------------------------------------------------------
+
+CREATE TABLE users(
+
+id  INT,
+
+email STRING, 
+
+language STRING,
+
+loc STRING
+
+)
+
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' 
+
+STORED AS TEXTFILE;
+
+
+
+CREATE TABLE transaction(
+
+id  INT,
+
+product_id STRING,
+
+user_id INT,
+
+purchase_amount INT,
+
+item_description STRING
+
+)
+
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' 
+
+STORED AS TEXTFILE;
+
+
+
+LOAD DATA LOCAL INPATH '/home/edureka/module7/input/user.txt' OVERWRITE INTO TABLE users;
+
+
+
+LOAD DATA LOCAL INPATH '/home/edureka/module7/input/transaction.txt' OVERWRITE INTO TABLE transaction;
+
+
+
+select t2.product_id, count(DISTINCT t1.loc)
+
+from users t1 join transaction t2 on(t1.id=t2.user_id)
+
+group by t2.product_id;
+
+
+------------------------------VVVVV IMP--------------------------------------
+#######
+$$$$$$$
+
+Run the functions from the pdf. They are built in functions by horton works ..
+
+
+----------------------------------------------UDF-------------------------------------------------------
+
+--UDF Example
+
+ADD JAR /home/edureka/module7/class6.jar;
+
+
+
+CREATE DATABASE healthDB1;
+
+USE healthDB1;
+
+
+
+CREATE TABLE healthCareSampleDS 
+
+(PatientID INT, 
+
+Name STRING, 
+
+DOB STRING, 
+
+PhoneNumber STRING, 
+
+EmailAddress STRING, 
+
+SSN STRING, 
+
+Gender STRING, 
+
+Disease STRING, 
+
+weight FLOAT)
+
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',';
+
+
+
+LOAD DATA LOCAL INPATH '/home/edureka/module7/input/healthcare_Sample_dataset1.csv' INTO table healthCareSampleDS;
+
+
+
+CREATE TEMPORARY FUNCTION deIdentify AS 'com.eng.hive.udf.Deidentify';
+
+
+
+CREATE TABLE healthCareSampleDSDeidentified 
+
+AS 
+
+SELECT PatientID, deIdentify(Name), DOB, deIdentify(PhoneNumber), deIdentify(EmailAddress), deIdentify(SSN), deIdentify(Gender), Disease, weight FROM healthCareSampleDS;
+
+
+
+select * from healthCareSampleDSDeidentified limit 10;
+
+
+
+
+-------------------------------------
+OTHERS
+
+
+
+--PIG WORD COUNT DEMO------
+
+pig wordcount.pig
+
+
+
+--HADOOP STREAMING DEMO-----
+
+cd /usr/lib/hadoop
+
+
+
+hadoop fs -mkdir /user/cloudera/class3/wc-input;
+
+hadoop fs -put '' /user/cloudera/class3/wc-input
+
+
+
+bin/hadoop jar ./contrib/streaming/hadoop-streaming-0.20.2-cdh3u0.jar -file /home/cloudera/class3/streaming/mapper.py    -mapper "python /home/cloudera/class3/streaming/mapper.py"   -reducer "python /home/cloudera/class3/streaming/reducer.py"  -input /user/cloudera/class3/wc-input  -output /user/cloudera/class6/streaming/wc-str-output-2  -file /home/cloudera/class3/streaming/reducer.py
+
+
+
+http://localhost:50030/jobtracker.jsp
+
+
+
+http://localhost:50070/dfshealth.jsp
+
