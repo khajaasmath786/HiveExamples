@@ -1,0 +1,5 @@
+Step1: Please see my notes in hadoop definative guide
+
+UDTF should have inner class and when generating/compiling you can see one more class.
+
+Inner class should have five methods.
