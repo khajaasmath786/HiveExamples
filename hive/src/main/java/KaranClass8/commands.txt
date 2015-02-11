@@ -1,0 +1,201 @@
+##################Dynamic partitioning#########################################################
+hadoop fs -mkdir hive
+hadoop fs -mkdir /hive/DynamicPartition
+CREATE EXTERNAL TABLE page_view_ext_d1(
+
+view_time INT, 
+
+user_id BIGINT,
+
+page_url STRING,
+
+ip STRING COMMENT 'IP Address of the User')
+
+COMMENT 'This is the page view table'
+
+PARTITIONED BY(dt STRING, country STRING)
+
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' 
+
+STORED AS TEXTFILE
+
+LOCATION '/hive/DynamicPartition';
+
+INSERT OVERWRITE TABLE page_view_ext
+
+PARTITION (dt='2014-04-15', country='US')
+
+SELECT view_time,user_id,page_url,ip from page_view where dt='2014-04-15' and country='US';
+
+
+set hive.exec.dynamic.partition.mode=nonstrict;
+set hive.exec.dynamic.partition=true;
+
+INSERT OVERWRITE TABLE page_view_ext_d1
+
+PARTITION (dt, country)
+
+SELECT view_time,user_id,page_url,ip,dt,country from page_view where dt='2014-04-15' and country='US';
+
+########################### JOINS #########################################################
+
+--1.JOIN----------------------------------
+sudo hive
+
+create database class7;
+use  class7m;
+
+create table course_view(
+user_id BIGINT ,
+course_name STRING,
+reg_date STRING
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+STORED AS TEXTFILE;
+
+create table user(
+user_id BIGINT ,
+user_name STRING,
+age INT,
+gender STRING
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+STORED AS TEXTFILE;
+
+DESCRIBE extended user;
+
+LOAD DATA LOCAL INPATH '/home/edureka/git/localHive/hive/src/main/java/KaranClass8/course_view.csv' INTO TABLE course_view;
+LOAD DATA LOCAL INPATH '/home/edureka/git/localHive/hive/src/main/java/KaranClass8/user.csv' INTO TABLE user;
+
+
+create table cv_users(
+user_id BIGINT ,
+course_name STRING,
+reg_date STRING,
+user_name STRING,
+gender STRING,
+age INT
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+STORED AS TEXTFILE;
+
+create table cv_age_edu(
+age INT,
+count INT
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+STORED AS TEXTFILE;
+
+
+create table cv_gender_edu(
+gender STRING,
+count INT
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+STORED AS TEXTFILE;
+
+
+
+FROM course_view cv JOIN user edu ON (cv.user_id= edu.user_id)
+INSERT OVERWRITE TABLE cv_users
+SELECT cv.*, edu.user_name,edu.gender, edu.age
+WHERE cv.reg_date= '01-01-2011';
+
+FROM course_view cv JOIN user edu ON (cv.user_id= edu.user_id)
+INSERT TABLE cv_users
+SELECT cv.*, edu.user_name,edu.gender, edu.age
+WHERE cv.reg_date= '01-01-2011';
+
+
+--2. Outer Joins
+FROM course_view cv FULL OUTER JOIN user edu ON (cv.user_id= edu.user_id)
+INSERT OVERWRITE TABLE cv_users
+SELECT cv.*, edu.user_name,edu.gender, edu.age
+WHERE cv.reg_date= '01-01-2011';
+
+--3. Multi table insert
+FROM cv_users
+INSERT OVERWRITE TABLE cv_gender_edu
+SELECT cv_users.gender, count(DISTINCT cv_users.user_id)
+GROUP BY(cv_users.gender)
+INSERT OVERWRITE TABLE cv_age_edu
+SELECT cv_users.age, count(DISTINCT cv_users.user_id)
+GROUP BY(cv_users.age);
+
+
+--5. word count in hive using custom mapper and reducer
+create table book(
+line STRING)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+STORED AS TEXTFILE;
+
+create table wordcount(
+word STRING ,
+count BIGINT
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ','
+STORED AS TEXTFILE;
+
+LOAD DATA LOCAL INPATH '/home/edureka/module8/input/data1.txt' INTO TABLE book;
+
+ADD FILE /home/edureka/module8/mapper.py;
+ADD FILE /home/edureka/module8/reducer.py;
+
+
+FROM book
+SELECT TRANSFORM(line) USING 'python mapper.py' AS word, count;
+
+FROM
+(FROM book
+SELECT TRANSFORM(line) USING 'python mapper.py' AS word, count) map_output
+SELECT TRANSFORM(word,count) USING 'python reducer.py' AS word,total_count
+
+
+FROM
+(FROM book
+MAP line USING 'python mapper.py' AS word, count CLUSTER BY word) map_output
+REDUCE word,count USING 'python reducer.py' AS word,total_count
+
+--6. HIVE FILE FORMATS----------------------------------------------------------------------
+--refer images(Hadoop SerDe) and FAQ
+
+DESCRIBE extended book;
+
+--7. COMPLEX DATA TYPES -------------------------------------------------------------
+
+create table employee
+(name STRING,
+skills ARRAY<STRING>,
+sal BIGINT,
+deductions MAP<STRING ,INT>, 
+address struct<city:STRING,state:STRING,pin:BIGINT>)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' COLLECTION ITEMS TERMINATED BY '$' MAP KEYS TERMINATED BY '#' ;
+
+
+load data local inpath '/home/edureka/module8/input/employee.txt' into table employee;
+
+select name,skills[1],address.state,deductions["PF"] from employee;
+
+--8. SerDe----------------
+ADD JAR /home/edureka/module8/hive-serdes.jar
+
+
+create external table users(name string,rollno int,address string,salary double)
+ROW FORMAT SERDE 'com.cloudera.hive.serde.JSONSerDe'
+location '/module8/serde-ex-3';
+
+DESCRIBE extended users;
+
+load data local inpath  '/home/edureka/module8/input/inputserde.json' into table users;
+
+select * from users limit 10; 
+
+------------Hive Server--------------------------
+sudo su
+export HADOOP_HOME=/usr/lib/hadoop-2.2.0/
+/usr/lib/hive-0.13.1-bin/bin/hive --service hiveserver -p 10000
+
+export CLASSPATH=$CLASSPATH:/home/edureka/module8/hive-jdbc-0.13.0.jar
+export CLASSPATH=.:/home/edureka/module8/hive-jdbc-0.13.0.jar:
+
+

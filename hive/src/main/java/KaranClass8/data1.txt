@@ -1,0 +1,36 @@
+BOSTON: Hackers could crack email systems, security firewalls and possibly mobile phones through the "Heartbleed" computer bug, according to security experts who warned on Thursday that the risks extended beyond just internet web servers. 
+
+The widespread bug surfaced late on Monday, when it was disclosed that a pernicious flaw in a widely used Web encryption program known as OpenSSL opened hundreds of thousands of websites to data theft. Developers rushed out patches to fix affected web servers when they disclosed the problem, which affected companies from Amazon.com and Google to Yahoo. 
+
+Yet pieces of vulnerable OpenSSL code can be found inside plenty of other places, including email servers, ordinary PCs, phones and even security products such as firewalls. Developers of those products are scrambling to figure out whether they are vulnerable and patch them to keep their users safe. 
+
+"I am waiting for a patch," said Jeff Moss, a security adviser to the US Department of Homeland Security and founder of the Def Con hacking conference. Def Con's network uses an enterprise firewall from McAfee, which is owned by Intel's security division. 
+
+He said he was frustrated because people had figured out that his email and web traffic is vulnerable and posted about it on the internet — but he can't take steps to remedy the problem until Intel releases a patch. 
+
+"Everybody is going through the exact same thing I'm going through, if you are going through a vendor fix," he said. 
+
+An Intel spokesman declined comment, referring Reuters to a company blog that said: "We understand this is a difficult time for businesses as they scramble to update multiple products from multiple vendors in the coming weeks. The McAfee products that use affected versions of OpenSSL are vulnerable and need to be updated." 
+
+It did not say when they would be released. 
+
+The Heartbleed vulnerability went undetected for about two years and can be exploited without leaving a trace, so experts and consumers fear attackers may have compromised large numbers of networks without their knowledge. 
+
+Companies and government agencies are now rushing to understand which products are vulnerable, then set priorities for fixing them. They are anxious because researchers have observed sophisticated hacking groups conducting scans of the internet this week in search of vulnerable servers. 
+ 
+"Every security person is talking about this," said Chris Morales, practice manager with the cybersecurity services firm NSS Labs. 
+
+Cisco Systems, the world's biggest telecommunications equipment provider, said on its website that it is reviewing dozens of products to see if they are safe. It uncovered about a dozen that are vulnerable, including a TelePresence video conferencing server, a version of the IOS software for managing routers. A company spokesman declined to comment on how those issues might affect users, saying Cisco would provide more information as it became available. 
+
+Oracle has not posted such an advisory on its support site. Company spokeswoman Deborah Hellinger declined to comment on Heartbleed. 
+
+Microsoft, which runs a cloud computing and storage service, the Xbox platform and has hundreds of millions of Windows and Officer users, said in a statement that "a few services continue to be reviewed and updated with further protections." It did not identify them. 
+
+Officials with technology giants IBM and Hewlett-Packard could not be reached. EMC and Dell said they had no immediate comment. 
+
+Security experts said the vulnerable code is also found in some widely used email server software, the online browser anonymizing tool Tor and OpenVPN, as well as some online games and software that runs internet-connected devices such as webcams and mobile phones. 
+
+Jeff Forristal, chief technology officer of Bluebox Security, said that version 4.1.1 of Google's Android operating system, known as Jelly Bean, is also vulnerable. Google officials declined comment on his finding. 
+
+Other security experts said that they would avoid using any device with the vulnerable software in it, but that it would take a lot of effort for a hacker to extract useful data from a vulnerable Android phone.
+Sachin scored 100 runs in a match against Australia in 1999. Kumble has taken more than 400 wickets in international cricket.

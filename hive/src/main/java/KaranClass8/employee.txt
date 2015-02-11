@@ -1,0 +1,18 @@
+Nishu,Automation$Hadoop,1000000,PF#30000$Tax#40000,Hyderabad$AP$570005
+Tushar,Java$SQL$Hadoop,1200000,PF#32000$Tax#42000,Bangalore$Karnataka$5600023
+Sridhar,Hive$Hadoop,1000000,PF#33000$Tax#42000,Chennai$Madras$517560
+
+map(k,v)
+put(key,value)
+get(key)
+
+table_name, rowkey,cf,cq,ts
+
+schema creation:
+table, cfs
+create 'student', 'info', 'course_info'
+create 'person', 'personal_info', 'demographic'
+
+columns are added at run time
+
+table ->parts(regions)
