@@ -1,0 +1,15 @@
+hadoop fs -mkdir hive
+hadoop fs -mkdir /hive/json
+
+ADD JAR /home/edureka/git/localHive/hive/src/main/java/jsonSerdeHive/hive-serdes.jar;
+
+create external table jsonData(name string,rollno int,address string,salary double)
+ROW FORMAT SERDE 'com.cloudera.hive.serde.JSONSerDe'
+location '/hive/json';
+
+DESCRIBE extended jsonData;
+
+load data local inpath  '/home/edureka/git/localHive/hive/src/main/java/jsonSerdeHive/inputData.json' into table jsonData;
+# if any issues with data .. remove data with overwrite 
+load data local inpath  '/home/edureka/git/localHive/hive/src/main/java/jsonSerdeHive/inputData.json' overwrite into table jsonData;
+select * from jsonData limit 10; 

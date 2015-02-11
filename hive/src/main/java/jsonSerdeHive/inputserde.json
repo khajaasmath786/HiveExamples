@@ -1,0 +1,8 @@
+{"name":"director1","rollno":100,"address":"more data1","salary":123.001}
+{"name":"director12","rollno":250,"address":"more data2","salary":123.002}
+{"name":"director13","rollno":350,"address":"more data3","salary":123.003}
+{"name":"director14","rollno":700,"address":"more data4","salary":124.004}
+
+
+director1,100,more data1, 123.001
+<Employee><name>director</name><rollno>123</rollno>..</Employee>
